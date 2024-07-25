@@ -10,22 +10,19 @@ export default function Progress({
   setSelected,
   setAnswer,
 }) {
-    const time = 10;
-    const timer = time * 1000;
+  const time = 10;
+  const timer = time * 1000;
   const [remainingTime, setRemainingTime] = useState(timer);
 
   useEffect(() => {
     setRemainingTime(timer);
-    // console.log(qcount, "mm");
     interval = setInterval(() => {
-      //   console.log("interval");
       setRemainingTime((prev) => prev - 100);
     }, 100);
     return () => {};
   }, [qcount]);
 
   useEffect(() => {
-    // console.log(remainingTime, "bb");
     if (remainingTime === 0) {
       onColor();
       setAnswer((prev) => {
@@ -46,7 +43,6 @@ export default function Progress({
       clearInterval(interval);
     }
   }, [remainingTime]);
-  //   console.log("rerender");
 
   return <progress value={remainingTime} max={timer} />;
 }

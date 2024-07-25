@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import questions from "../questions";
 import Progress from "./Progress";
 
@@ -7,14 +7,15 @@ export default function Quiz({ handleQuiz, setAnswer }) {
   const [qcount, setQCount] = useState(1);
   const [selected, setSelected] = useState(-1);
   const [color, setColor] = useState("");
-  const choose = useRef();
+  const [shuffledAnswers, setShuffledAnswers] = useState([]);
 
-  const quizOn = qcount <= questions.length;
-  if (!quizOn) {
-    return;
-  }
   const { id, text, answers, correct } = questions[qcount - 1];
-  function handleClick(ans, answers, index) {
+  useEffect(() => {
+    console.log("shuffled");
+    setShuffledAnswers(answers.sort(() => Math.random() - 0.5));
+  }, [answers]);
+
+  function handleClick(ans, shuffledAnswers, index) {
     setSelected(index);
     setAnswer((prev) => {
       const update = [...prev];
@@ -22,7 +23,7 @@ export default function Quiz({ handleQuiz, setAnswer }) {
         return [ans];
       }
       const popped = update[update.length - 1];
-      if (answers.includes(popped)) {
+      if (shuffledAnswers.includes(popped)) {
         update[update.length - 1] = ans;
         return [...update];
       }
@@ -51,12 +52,11 @@ export default function Quiz({ handleQuiz, setAnswer }) {
       </section>
       <section>
         <ul id="answers">
-          {answers.map((ans, index) => (
+          {shuffledAnswers.map((ans, index) => (
             <li className="answer" key={`${id}-${index}`}>
               <button
-                ref={choose}
                 className={selected === index ? `selected ${color}` : ""}
-                onClick={() => handleClick(ans, answers, index)}
+                onClick={() => handleClick(ans, shuffledAnswers, index)}
               >
                 {ans}
               </button>
